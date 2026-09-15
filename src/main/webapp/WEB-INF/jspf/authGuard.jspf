@@ -1,0 +1,40 @@
+<%--
+  Include at the very top of any page that requires a logged-in student.
+  Relies on the "student" session attribute set by login.jsp.
+--%>
+<%
+    com.woxsen.greenmobility.model.Student loggedInStudent =
+            (com.woxsen.greenmobility.model.Student) session.getAttribute("student");
+    if (loggedInStudent == null) {
+        response.sendRedirect(request.getContextPath() + "/login.jsp");
+        return;
+    }
+
+    // Settles any rides whose window has passed into points, on every guarded
+    // page load -- plain Tomcat has no job scheduler, so this is where that
+    // work happens instead of a background task. Non-fatal: a student must
+    // still be able to use the app if this fails, same reasoning as the login
+    // page's campus figures.
+    try {
+        new com.woxsen.greenmobility.service.PointsService().reconcile(loggedInStudent.getStudentId());
+        com.woxsen.greenmobility.model.Student refreshedStudent =
+                new com.woxsen.greenmobility.dao.StudentDAO().findById(loggedInStudent.getStudentId());
+        if (refreshedStudent != null) {
+            loggedInStudent = refreshedStudent;
+            session.setAttribute("student", loggedInStudent);
+        }
+    } catch (Exception ignored) {
+    }
+
+    // Feeds the site-wide auto-prompt (WEB-INF/jspf/autoFeedback.jspf, included
+    // from footer.jspf) that asks for a rating right after a ride completes,
+    // rather than waiting for the student to notice History's "Rate this ride"
+    // button. Admin accounts never have bookings, so this is skipped for them.
+    if (!loggedInStudent.isAdmin()) {
+        try {
+            request.setAttribute("pendingFeedbackBooking",
+                    new com.woxsen.greenmobility.dao.BookingDAO().findMostRecentUnrated(loggedInStudent.getStudentId()));
+        } catch (Exception ignored) {
+        }
+    }
+%>

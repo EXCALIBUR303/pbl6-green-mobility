@@ -1,0 +1,86 @@
+PRESENTATION DEMO SCRIPT — Campus Green Mobility
+==================================================
+
+BEFORE YOU START (check this the morning of, in case the Mac restarted):
+  - Open Terminal, paste this, confirm both say "started":
+      brew services list
+  - Open the app: http://localhost:8080/green-mobility/login.jsp
+
+LOGIN
+  Email:    sid@woxsen.edu.in
+  Password: password123
+
+------------------------------------------------------------------
+STEP 1 — Session vs. Cookie (20 sec)
+------------------------------------------------------------------
+1. On the login page, tick "Remember my email", log in.
+2. Click your name (top right) -> Logout.
+3. Point out: your email is still pre-filled on the login page
+   ("Filled in from your last visit") even though you were just
+   logged out. Say: "The cookie survived logout; the session didn't
+   — that's the difference between the two."
+
+------------------------------------------------------------------
+STEP 2 — Browse (10 sec)
+------------------------------------------------------------------
+Log back in. On "Browse Slots", point at any capacity bar and say
+this is a live query against MySQL, not hardcoded.
+
+------------------------------------------------------------------
+STEP 3 — Overbooking prevention (the main event — 60 sec)
+------------------------------------------------------------------
+The "Academic Block -> Food Court" slot is pre-set to exactly
+1 SEAT LEFT (2 of 3 booked). Do NOT book it before the actual demo.
+
+1. Click "Book" on that slot -> Confirm booking.
+   -> Succeeds. Slot now shows "Full" on the browse page.
+2. Try to book it again:
+     Easiest: open a second browser tab, go to Browse Slots,
+     click "Book" on the same (now full) slot.
+   -> It redirects back with "Sorry, that slot just filled up."
+     (The Book button is also disabled once full, so mention you're
+     hitting the confirm page directly to prove the SERVER blocks it,
+     not just a disabled button in the UI.)
+3. Switch to VS Code, open SlotDAO.java, show tryReserveSeat():
+     UPDATE vehicle_slots SET booked_count = booked_count + 1
+     WHERE slot_id = ? AND booked_count < capacity
+   Say: "This check and the write happen as ONE atomic database
+   operation, so two people booking the same last seat at the same
+   instant can't both succeed — only one UPDATE actually changes a
+   row, the other affects zero rows and we treat that as full."
+
+OPTIONAL — prove it at the database level (if using TablePlus):
+  Run this query before step 1 and again after step 2:
+     SELECT slot_id, route, booked_count, capacity
+     FROM vehicle_slots WHERE slot_id = 3;
+  Shows booked_count going 2 -> 3, and staying at 3 after the
+  rejected attempt (not incrementing past capacity).
+
+------------------------------------------------------------------
+STEP 4 — Carbon tracker (15 sec)
+------------------------------------------------------------------
+On the confirm-booking screen you just used, point at the CO2 saved
+figure and the "private car vs. this trip" comparison. Then go to
+"My Impact" and point at the running total / progress ring.
+
+------------------------------------------------------------------
+IF ASKED — one-liners for anything you're not demoing live
+------------------------------------------------------------------
+Leaderboard:        "Ranks students by total CO2 saved — stretch goal."
+Monthly close-out:  "Archives a month's savings and resets the
+                     counter without deleting booking history —
+                     also a stretch goal."
+Architecture:       "3-tier: JSP pages, a DAO layer for all SQL,
+                     MySQL for storage."
+
+==================================================
+TABLEPLUS CONNECTION (if the pre-filled window didn't open)
+==================================================
+  Host:      127.0.0.1
+  Port:      3307
+  User:      greenmob
+  Password:  greenmob_pw
+  Database:  green_mobility
+
+TERMINAL FALLBACK (paste into Terminal if TablePlus misbehaves):
+  mysql -u greenmob -pgreenmob_pw --socket=/opt/homebrew/var/mysql/mysql.sock green_mobility

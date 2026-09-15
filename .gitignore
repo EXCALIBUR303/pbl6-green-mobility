@@ -1,0 +1,13 @@
+# Build output
+target/
+*.class
+
+# Runtime logs and transient state from the local dev/demo tunnel scripts
+scripts/*.log
+TUNNEL_URL.txt
+
+# macOS / IDE
+.DS_Store
+.idea/
+.vscode/
+*.iml

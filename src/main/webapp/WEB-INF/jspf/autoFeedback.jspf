@@ -1,0 +1,61 @@
+<%--
+  Site-wide auto-prompt: if the student has a just-completed ride with no
+  feedback yet (set in authGuard.jspf), offer the rating form right away
+  instead of waiting for them to notice History's "Rate this ride" button.
+  app.js (initAutoFeedback) shows this once per booking per browser
+  (localStorage-gated) so it doesn't re-nag on every single page view.
+  Separate modal id from history.jsp's own rateModal: a student can have more
+  than one completed-unrated ride, and that button targets a specific one
+  while this always targets only the single most recent.
+--%>
+<%
+    Object pendingObj = request.getAttribute("pendingFeedbackBooking");
+    com.woxsen.greenmobility.model.Booking pendingFeedbackBooking =
+            pendingObj != null ? (com.woxsen.greenmobility.model.Booking) pendingObj : null;
+%>
+<% if (pendingFeedbackBooking != null) { %>
+<div id="autoFeedbackTrigger" style="display:none;" data-booking-id="<%= pendingFeedbackBooking.getBookingId() %>"></div>
+
+<div class="modal fade" id="autoFeedbackModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" action="<%= request.getContextPath() %>/submitFeedback.jsp" data-busy>
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-star me-2"></i>How was your ride?</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="bookingId" value="<%= pendingFeedbackBooking.getBookingId() %>">
+          <p class="text-secondary small mb-3"><%= pendingFeedbackBooking.getRoute() %></p>
+          <div class="mb-3">
+              <label class="form-label small fw-semibold">How was it?</label>
+              <select class="form-select" name="rating" required>
+                  <option value="5">&#9733;&#9733;&#9733;&#9733;&#9733; Excellent</option>
+                  <option value="4">&#9733;&#9733;&#9733;&#9733; Good</option>
+                  <option value="3" selected>&#9733;&#9733;&#9733; Okay</option>
+                  <option value="2">&#9733;&#9733; Poor</option>
+                  <option value="1">&#9733; Very poor</option>
+              </select>
+          </div>
+          <div class="mb-3">
+              <label class="form-label small fw-semibold">What could improve?</label>
+              <select class="form-select" name="category" required>
+                  <option value="VEHICLE_CONDITION">Vehicle condition</option>
+                  <option value="PUNCTUALITY">Punctuality</option>
+                  <option value="DRIVER_STAFF">Driver / staff</option>
+                  <option value="ROUTE_COVERAGE">Route coverage</option>
+                  <option value="BOOKING_EXPERIENCE">Booking experience</option>
+                  <option value="OTHER">Other</option>
+              </select>
+          </div>
+          <textarea class="form-control" name="comment" rows="2" placeholder="Any comments? (optional)"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Maybe later</button>
+          <button type="submit" class="btn btn-primary"><i class="bi bi-send me-1"></i>Submit feedback</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<% } %>

@@ -1,0 +1,956 @@
+/* ==========================================================================
+   Campus Green Mobility — design system
+   A theme layer on top of Bootstrap 5. Bootstrap supplies the grid, tables,
+   forms and utilities; everything below gives the app its own identity:
+   an eco-tech look built on deep forest greens, organic geometry and motion.
+   ========================================================================== */
+
+:root {
+  /* Brand scale */
+  --forest-900: #0d2818;
+  --forest-800: #14361f;
+  --forest-700: #1b4332;
+  --forest-600: #245c42;
+  --forest-500: #2d6a4f;
+  --forest-400: #40916c;
+  --forest-300: #74c69d;
+  --forest-200: #b7e4c7;
+  --forest-100: #d8f3dc;
+  --forest-50:  #eef8f1;
+
+  --mint: #95d5b2;
+  --lime: #b9e769;
+  --sky-100: #e0f2fe;
+  --sky-700: #075985;
+  --amber: #f5a524;
+
+  /* Surfaces */
+  --surface: #ffffff;
+  --surface-sunk: #f4f8f5;
+  --page-bg: #f3f7f4;
+  --border: #e4ede8;
+
+  /* Ink */
+  --ink-900: #14251c;
+  --ink-600: #4a5c52;
+  --ink-400: #7d8f85;
+
+  /* Geometry */
+  --r-sm: .5rem;
+  --r-md: .875rem;
+  --r-lg: 1.15rem;
+  --r-xl: 1.5rem;
+
+  /* Elevation — soft, green-tinted rather than neutral grey */
+  --shadow-xs: 0 1px 2px rgba(13, 40, 24, .05);
+  --shadow-sm: 0 2px 8px rgba(13, 40, 24, .06);
+  --shadow-md: 0 8px 24px rgba(13, 40, 24, .08);
+  --shadow-lg: 0 18px 46px rgba(13, 40, 24, .13);
+
+  --ease: cubic-bezier(.22, .61, .36, 1);
+  --ease-out-back: cubic-bezier(.34, 1.4, .64, 1);
+
+  /* Bootstrap overrides */
+  --bs-body-bg: var(--page-bg);
+  --bs-body-color: var(--ink-900);
+  --bs-primary: var(--forest-500);
+  --bs-primary-rgb: 45, 106, 79;
+  --bs-link-color: var(--forest-500);
+  --bs-link-hover-color: var(--forest-700);
+  --bs-border-color: var(--border);
+  --bs-font-sans-serif: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont,
+                        "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background-color: var(--page-bg);
+  color: var(--ink-900);
+  font-family: var(--bs-font-sans-serif);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Faint organic wash so the page isn't a flat slab of grey-green. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(760px 420px at 12% -8%, rgba(116, 198, 157, .16), transparent 62%),
+    radial-gradient(680px 420px at 96% 4%, rgba(149, 213, 178, .12), transparent 60%);
+}
+
+/* Both sit above the body::before background wash. The navbar needs a
+   HIGHER layer than main: giving it a z-index makes it a stacking context,
+   which traps its dropdown menu inside — so with equal z-index the later
+   sibling (main) would paint over the open dropdown. 1030 matches
+   Bootstrap's $zindex-fixed, keeping it below toasts (1090). */
+main { position: relative; z-index: 1; }
+nav  { position: relative; z-index: 1030; }
+
+h1, h2, h3, h4, .fw-display {
+  letter-spacing: -.02em;
+  font-weight: 700;
+}
+
+.text-forest { color: var(--forest-700) !important; }
+.bg-forest   { background-color: var(--forest-700) !important; }
+
+.page-title { font-size: 1.65rem; line-height: 1.2; }
+
+.section-label {
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--ink-400);
+}
+
+/* ==========================================================================
+   Navbar
+   ========================================================================== */
+
+.navbar.bg-forest {
+  background: linear-gradient(100deg, var(--forest-800), var(--forest-600)) !important;
+  box-shadow: var(--shadow-sm);
+}
+
+.navbar .navbar-brand {
+  letter-spacing: -.02em;
+}
+
+.navbar .brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, .14);
+  backdrop-filter: blur(6px);
+}
+
+.navbar .nav-link {
+  color: rgba(255, 255, 255, .74);
+  border-radius: var(--r-sm);
+  padding: .45rem .8rem !important;
+  font-size: .92rem;
+  font-weight: 500;
+  transition: color .2s var(--ease), background-color .2s var(--ease);
+}
+
+.navbar .nav-link:hover { color: #fff; background: rgba(255, 255, 255, .1); }
+
+.navbar .nav-link.active {
+  color: var(--forest-900);
+  background: var(--mint);
+  font-weight: 600;
+}
+
+.avatar-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--forest-300), var(--forest-500));
+  color: #fff;
+  font-weight: 700;
+  font-size: .85rem;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .22);
+}
+
+.avatar-circle.avatar-muted {
+  background: var(--forest-100);
+  color: var(--forest-700);
+  box-shadow: none;
+}
+
+/* ==========================================================================
+   Cards & surfaces
+   ========================================================================== */
+
+.card {
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-xs);
+}
+
+.card-hover {
+  transition: transform .28s var(--ease), box-shadow .28s var(--ease),
+              border-color .28s var(--ease);
+}
+
+.card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--forest-200);
+}
+
+/* ==========================================================================
+   Stat tiles
+   ========================================================================== */
+
+.stat-tile {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--r-lg);
+  padding: 1.15rem 1.25rem;
+  background: linear-gradient(150deg, var(--forest-50), var(--forest-100));
+  border: 1px solid var(--forest-200);
+}
+
+.stat-tile.tile-dark {
+  background: linear-gradient(150deg, var(--forest-700), var(--forest-500));
+  border-color: transparent;
+  color: #fff;
+}
+
+.stat-tile.tile-dark .stat-label { color: rgba(255, 255, 255, .72); }
+.stat-tile.tile-dark .stat-value { color: #fff; }
+.stat-tile.tile-dark .stat-glyph { color: rgba(255, 255, 255, .22); }
+
+.stat-value {
+  font-size: 1.85rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--forest-700);
+  letter-spacing: -.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-label {
+  font-size: .78rem;
+  font-weight: 500;
+  color: var(--forest-500);
+  margin-top: .15rem;
+}
+
+.stat-glyph {
+  position: absolute;
+  right: -6px;
+  bottom: -10px;
+  font-size: 3.4rem;
+  color: var(--forest-300);
+  opacity: .35;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Route journey visualisation — the app's signature motif
+   ========================================================================== */
+
+.journey {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  font-size: .82rem;
+  color: var(--ink-600);
+}
+
+.journey .stop {
+  font-weight: 600;
+  color: var(--ink-900);
+  white-space: nowrap;
+}
+
+.journey .track {
+  position: relative;
+  flex: 1 1 auto;
+  /* Capped so a short route name doesn't stretch the dashes across the card. */
+  min-width: 26px;
+  max-width: 90px;
+  height: 2px;
+  background: repeating-linear-gradient(90deg,
+              var(--forest-300) 0 5px, transparent 5px 10px);
+  opacity: .75;
+}
+
+.journey .node {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--forest-400);
+}
+
+.journey .node.hollow {
+  background: var(--surface);
+  border: 2px solid var(--forest-400);
+}
+
+.journey.lg { font-size: .95rem; gap: .75rem; }
+.journey.lg .node { width: 11px; height: 11px; }
+.journey.lg .track { max-width: 160px; }
+
+/* Route names wrap rather than overflow on narrow cards. */
+.journey { flex-wrap: wrap; row-gap: .2rem; }
+
+/* ==========================================================================
+   Slot cards (browse page)
+   ========================================================================== */
+
+.slot-card {
+  display: grid;
+  /* icon | details | capacity | action */
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  gap: 1.1rem;
+  align-items: center;
+  padding: 1.1rem 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-xs);
+  transition: transform .26s var(--ease), box-shadow .26s var(--ease),
+              border-color .26s var(--ease);
+}
+
+.slot-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--forest-200);
+}
+
+.slot-card.is-full { opacity: .62; }
+.slot-card.is-full:hover { transform: none; box-shadow: var(--shadow-xs); }
+
+.vehicle-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: var(--r-md);
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.vehicle-icon.lg { width: 60px; height: 60px; font-size: 1.65rem; border-radius: var(--r-lg); }
+
+.vehicle-icon.shuttle {
+  background: linear-gradient(140deg, var(--forest-100), var(--forest-200));
+  color: var(--forest-700);
+}
+
+.vehicle-icon.bike {
+  background: linear-gradient(140deg, var(--sky-100), #bae6fd);
+  color: var(--sky-700);
+}
+
+.meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem .9rem;
+  font-size: .82rem;
+  color: var(--ink-600);
+}
+
+.meta-row .meta { display: inline-flex; align-items: center; gap: .3rem; }
+.meta-row i { color: var(--forest-400); }
+
+/* Capacity meter */
+.capacity {
+  min-width: 132px;
+}
+
+.capacity .bar {
+  height: 6px;
+  border-radius: 99px;
+  background: var(--surface-sunk);
+  overflow: hidden;
+}
+
+.capacity .fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--forest-400), var(--forest-300));
+  width: 0;
+  /* width is animated by motion.dev (animateFills) — this element carries
+     data-fill, so a CSS transition here would fight it frame-for-frame. */
+}
+
+.capacity.warn .fill { background: linear-gradient(90deg, #e8a33d, #f5c563); }
+.capacity.full .fill { background: #d9534f; }
+
+/* ==========================================================================
+   Pills, chips, badges
+   ========================================================================== */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .3rem .7rem;
+  border-radius: 99px;
+  font-size: .76rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.pill-eco    { background: var(--forest-100); color: var(--forest-700); }
+.pill-soon   { background: #fef3d7; color: #8a5a00; }
+.pill-full   { background: #fde8e8; color: #a52a25; }
+.pill-muted  { background: var(--surface-sunk); color: var(--ink-600); }
+.pill-live   { background: var(--forest-700); color: #fff; }
+
+/* Pulse is driven by motion.dev in app.js (initPulseDots), not a keyframe. */
+.pill-live .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--mint);
+}
+
+/* Filter chips */
+.chip-row { display: flex; flex-wrap: wrap; gap: .5rem; }
+
+.chip {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--ink-600);
+  border-radius: 99px;
+  padding: .42rem .95rem;
+  font-size: .85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s var(--ease);
+}
+
+.chip:hover { border-color: var(--forest-300); color: var(--forest-600); }
+
+.chip.active {
+  background: var(--forest-700);
+  border-color: var(--forest-700);
+  color: #fff;
+}
+
+.chip .count {
+  opacity: .6;
+  font-weight: 500;
+  margin-left: .2rem;
+}
+
+/* Recently viewed (cookie-backed) */
+.recent-strip {
+  background: var(--surface);
+  border: 1px dashed var(--forest-200);
+  border-radius: var(--r-lg);
+  padding: .95rem 1.1rem;
+}
+
+.recent-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .42rem .85rem;
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  background: var(--surface-sunk);
+  font-size: .82rem;
+  color: var(--ink-900);
+  text-decoration: none;
+  transition: all .2s var(--ease);
+}
+
+.recent-chip:hover {
+  border-color: var(--forest-400);
+  background: var(--forest-100);
+  color: var(--forest-700);
+  transform: translateY(-1px);
+}
+
+.recent-chip i { color: var(--forest-400); }
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+
+.btn {
+  font-weight: 600;
+  border-radius: var(--r-sm);
+  transition: transform .18s var(--ease), box-shadow .18s var(--ease),
+              background-color .18s var(--ease);
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--forest-500);
+  --bs-btn-border-color: var(--forest-500);
+  --bs-btn-hover-bg: var(--forest-600);
+  --bs-btn-hover-border-color: var(--forest-600);
+  --bs-btn-active-bg: var(--forest-700);
+  --bs-btn-disabled-bg: var(--forest-300);
+  --bs-btn-disabled-border-color: var(--forest-300);
+  box-shadow: 0 2px 8px rgba(45, 106, 79, .24);
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(45, 106, 79, .3);
+}
+
+.btn-primary:active:not(:disabled) { transform: translateY(0); }
+
+.btn-outline-success {
+  --bs-btn-color: var(--forest-600);
+  --bs-btn-border-color: var(--forest-300);
+  --bs-btn-hover-bg: var(--forest-500);
+  --bs-btn-hover-border-color: var(--forest-500);
+}
+
+.btn:focus-visible,
+.form-control:focus,
+.form-check-input:focus {
+  border-color: var(--forest-400);
+  box-shadow: 0 0 0 .22rem rgba(64, 145, 108, .22);
+  outline: none;
+}
+
+.form-check-input:checked {
+  background-color: var(--forest-500);
+  border-color: var(--forest-500);
+}
+
+/* Button busy state, set by app.js on submit */
+.btn.is-busy { pointer-events: none; opacity: .78; }
+
+.btn.is-busy .spinner {
+  display: inline-block;
+  width: .85em; height: .85em;
+  margin-right: .4rem;
+  border: 2px solid rgba(255, 255, 255, .45);
+  border-top-color: #fff;
+  border-radius: 50%;
+  vertical-align: -.1em;
+  /* Rotation is driven by motion.dev in app.js (initBusyButtons). */
+}
+
+/* ==========================================================================
+   Progress ring (impact)
+   ========================================================================== */
+
+.ring-wrap { position: relative; width: 168px; height: 168px; }
+
+.ring-wrap svg { transform: rotate(-90deg); }
+
+.ring-track { stroke: var(--forest-100); }
+
+/* stroke-dashoffset is animated by motion.dev (animateFills); a CSS transition
+   here would fight it frame-for-frame. */
+.ring-value {
+  stroke: url(#ringGradient);
+  stroke-linecap: round;
+}
+
+.ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.ring-center .num {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--forest-700);
+  line-height: 1;
+  letter-spacing: -.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.ring-center .cap { font-size: .7rem; color: var(--ink-400); margin-top: .25rem; }
+
+/* ==========================================================================
+   Monthly trend bars
+   ========================================================================== */
+
+.trend {
+  display: flex;
+  align-items: stretch;
+  gap: .65rem;
+  height: 150px;
+  padding-top: .5rem;
+}
+
+.trend-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .4rem;
+  min-width: 0;
+}
+
+/* The bar is absolutely positioned against the track, so its height is
+   definite (top:0/bottom:0) rather than a percentage that has to resolve
+   against a flex-sized parent — which browsers collapse to zero. */
+.trend-track {
+  position: relative;
+  flex: 1;
+  width: 100%;
+}
+
+.trend-bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  width: 100%;
+  max-width: 46px;
+  border-radius: var(--r-sm) var(--r-sm) 3px 3px;
+  background: linear-gradient(180deg, var(--forest-300), var(--forest-500));
+  transform: scaleY(0);
+  transform-origin: bottom;
+  cursor: default;
+  /* scaleY is animated by motion.dev (animateFills). */
+}
+
+.trend-bar.is-current {
+  background: linear-gradient(180deg, var(--lime), var(--forest-400));
+}
+
+.trend-col .lbl {
+  font-size: .68rem;
+  color: var(--ink-400);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.trend-col .val {
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--forest-600);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================================
+   Timeline (booking history)
+   ========================================================================== */
+
+.timeline { position: relative; padding-left: 1.9rem; }
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 9px; top: .4rem; bottom: .4rem;
+  width: 2px;
+  background: linear-gradient(180deg, var(--forest-200), transparent);
+}
+
+.tl-item { position: relative; padding-bottom: 1.15rem; }
+.tl-item:last-child { padding-bottom: 0; }
+
+.tl-item::before {
+  content: "";
+  position: absolute;
+  left: -1.9rem;
+  top: .55rem;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid var(--forest-300);
+}
+
+.tl-item::after {
+  content: "";
+  position: absolute;
+  left: calc(-1.9rem + 6px);
+  top: calc(.55rem + 6px);
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--forest-400);
+}
+
+/* ==========================================================================
+   Leaderboard podium
+   ========================================================================== */
+
+.podium {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .85rem;
+  align-items: end;
+}
+
+.podium-card {
+  border-radius: var(--r-lg);
+  padding: 1.1rem .85rem;
+  text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-xs);
+  transition: transform .3s var(--ease-out-back), box-shadow .3s var(--ease);
+}
+
+.podium-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+
+.podium-card.p1 {
+  background: linear-gradient(165deg, #fffaf0, #fdf1d6);
+  border-color: #f0d9a8;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.podium-card.p2 { background: linear-gradient(165deg, #fbfcfc, #eef1f2); border-color: #dde3e5; }
+.podium-card.p3 { background: linear-gradient(165deg, #fdf8f4, #f4e6da); border-color: #e6d0bb; }
+
+.podium-medal {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+  color: #fff;
+  margin-bottom: .5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.medal-1 { background: linear-gradient(140deg, #f2c14e, #d99e0b); }
+.medal-2 { background: linear-gradient(140deg, #c9d1d4, #9aa5ab); }
+.medal-3 { background: linear-gradient(140deg, #d29b6d, #ad7444); }
+
+.rank-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: var(--surface-sunk);
+  color: var(--ink-600);
+  font-size: .8rem;
+  font-weight: 700;
+}
+
+.bar-track {
+  height: 7px;
+  border-radius: 99px;
+  background: var(--surface-sunk);
+  overflow: hidden;
+  min-width: 60px;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--forest-500), var(--forest-300));
+  width: 0;
+  /* width is animated by motion.dev (animateFills). */
+}
+
+.bar-fill.is-me { background: linear-gradient(90deg, var(--forest-700), var(--lime)); }
+
+.row-me { background: var(--forest-50) !important; }
+
+/* ==========================================================================
+   Login hero
+   ========================================================================== */
+
+.hero-panel {
+  background: linear-gradient(155deg, var(--forest-900) 0%, var(--forest-700) 45%, var(--forest-500) 100%);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(2px);
+}
+
+/* Both orbs drift via motion.dev in app.js (initOrbs), on two different
+   periods so they never visibly sync up. */
+.hero-orb.o1 {
+  width: 460px; height: 460px; right: -150px; top: -130px;
+  background: radial-gradient(circle, rgba(149, 213, 178, .22), transparent 68%);
+}
+
+.hero-orb.o2 {
+  width: 340px; height: 340px; left: -110px; bottom: -90px;
+  background: radial-gradient(circle, rgba(185, 231, 105, .15), transparent 68%);
+}
+
+.hero-panel > .hero-inner { position: relative; z-index: 1; }
+
+.hero-title {
+  font-size: clamp(2.05rem, 3.6vw, 3rem);
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -.035em;
+}
+
+.hero-title .accent {
+  background: linear-gradient(100deg, var(--lime), var(--mint));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-lead { color: rgba(255, 255, 255, .8); font-size: 1.02rem; max-width: 44ch; }
+
+.hero-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: .7rem;
+  padding-block: .42rem;
+  color: rgba(255, 255, 255, .88);
+  font-size: .94rem;
+}
+
+.hero-features i { color: var(--mint); margin-top: .15rem; flex-shrink: 0; }
+
+.hero-stats { border-top: 1px solid rgba(255, 255, 255, .18); }
+.hero-stat-value { font-size: 1.55rem; font-weight: 800; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.hero-stat-label { font-size: .76rem; color: rgba(255, 255, 255, .68); }
+.hero-stat-divider { width: 1px; background: rgba(255, 255, 255, .18); }
+
+.demo-hint {
+  background: var(--forest-50);
+  border: 1px dashed var(--forest-200);
+  border-radius: var(--r-md);
+}
+
+.demo-hint code { color: var(--forest-600); }
+
+/* ==========================================================================
+   Toasts
+   ========================================================================== */
+
+.toast-stack {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1090;
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
+  max-width: min(380px, calc(100vw - 2rem));
+}
+
+.app-toast {
+  display: flex;
+  align-items: flex-start;
+  gap: .7rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--forest-400);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-lg);
+  padding: .85rem 1rem;
+  font-size: .89rem;
+  /* Entrance and exit are both driven by motion.dev in app.js (toast). */
+}
+
+.app-toast.err { border-left-color: #d9534f; }
+.app-toast .ico { color: var(--forest-500); font-size: 1.05rem; line-height: 1.2; }
+.app-toast.err .ico { color: #d9534f; }
+
+/* ==========================================================================
+   JS-driven entrance (motion.dev) — login and staggered reveals
+   ========================================================================== */
+
+/* Only hides things once the inline <head> script in header.jspf has confirmed
+   scripting is alive. app.js writes inline opacity as it animates each element
+   in (inline wins over this rule), then drops the .js-anim class and clears
+   those inline styles so the elements end up under plain CSS control again. */
+.js-anim [data-anim] { opacity: 0; }
+
+/* Ripple press feedback. Deliberately a child element rather than a transform on
+   the button itself: style.css already owns .btn-primary's hover/active
+   translateY via a CSS transition, and an inline transform written by motion.dev
+   would silently outrank it and kill the hover for the rest of the page's life. */
+[data-ripple] { position: relative; overflow: hidden; }
+
+[data-ripple] > .ripple {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  background: rgba(255, 255, 255, .35);
+  /* Positioned by app.js, which offsets left/top by half the diameter. Centring
+     here with translate(-50%,-50%) would be lost the moment motion.dev writes
+     its own composed transform for the scale — verified against this build. */
+  transform: scale(0);
+}
+
+/* On the light-background outline button, white would be invisible. */
+.btn-outline-success > .ripple { background: rgba(45, 106, 79, .18); }
+
+/* Empty states */
+.empty-state { text-align: center; padding: 3rem 1rem; }
+.empty-state .glyph { font-size: 2.6rem; color: var(--forest-300); }
+
+/* Confetti canvas sits above content but ignores clicks. */
+#confetti-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1080;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 991.98px) {
+  .hero-panel { min-height: auto; }
+  .hero-panel .hero-inner { margin-inline: auto !important; padding-block: 2.75rem !important; }
+}
+
+/* Below ~1050px the four-column slot card gets cramped, so capacity and the
+   action button drop to a second row under the details. */
+@media (max-width: 1049.98px) {
+  .slot-card {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    row-gap: .85rem;
+  }
+  .slot-card .capacity {
+    grid-column: 2 / 3;
+    grid-row: 2;
+  }
+  .slot-card .slot-action {
+    grid-column: 3 / 4;
+    grid-row: 2;
+    justify-self: end;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .slot-card {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .slot-card .capacity { grid-column: 1 / -1; grid-row: auto; }
+  .slot-card .slot-action { grid-column: 1 / -1; grid-row: auto; justify-self: stretch; }
+  .slot-card .slot-action .btn { width: 100%; }
+  .podium { grid-template-columns: 1fr; }
+  .podium-card { order: unset !important; }
+  .ring-wrap { width: 140px; height: 140px; }
+}
+
+/* Respect users who prefer less motion.
+   NB: this block can only neutralise CSS animation and transition. It has no
+   effect on motion.dev, which writes inline style values on a rAF loop and never
+   consults CSS — app.js checks the same media query itself and skips every
+   animation outright. The rules here are the backstop for two cases: Bootstrap's
+   own CSS animations, and the possibility that app.js never gets to run at all
+   (in which case the gate rule below must not leave content invisible). */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+  .js-anim [data-anim] { opacity: 1 !important; transform: none !important; }
+}

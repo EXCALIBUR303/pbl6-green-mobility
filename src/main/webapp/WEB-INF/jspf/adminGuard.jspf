@@ -1,0 +1,19 @@
+<%--
+  Include at the very top of any admin-only page. Admin reuses the same
+  "student" session attribute as every other guarded page (is_admin is just a
+  flag on the same students row) rather than a parallel login system -- so a
+  non-admin who is logged in gets bounced to their own dashboard, and a signed-
+  out visitor gets bounced to login.jsp, same as authGuard.jspf.
+--%>
+<%
+    com.woxsen.greenmobility.model.Student loggedInAdmin =
+            (com.woxsen.greenmobility.model.Student) session.getAttribute("student");
+    if (loggedInAdmin == null) {
+        response.sendRedirect(request.getContextPath() + "/login.jsp");
+        return;
+    }
+    if (!loggedInAdmin.isAdmin()) {
+        response.sendRedirect(request.getContextPath() + "/availability.jsp");
+        return;
+    }
+%>

@@ -1,0 +1,8 @@
+</main>
+<% if (navStudent != null && !navStudent.isAdmin()) { %>
+<%@ include file="/WEB-INF/jspf/autoFeedback.jspf" %>
+<% } %>
+<script src="<%= ctx %>/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="<%= ctx %>/js/app.js"></script>
+</body>
+</html>

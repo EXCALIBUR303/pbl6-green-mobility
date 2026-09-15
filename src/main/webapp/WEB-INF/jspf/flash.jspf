@@ -1,0 +1,15 @@
+<%--
+  Carries a redirect's ?status=&msg= into the page as data attributes, which
+  app.js turns into a toast. c:out escapes the value, since msg arrives from
+  the query string.
+--%>
+<c:if test="${not empty param.msg}">
+    <div id="flash" class="d-none"
+         data-status="<c:out value='${param.status}'/>"
+         data-msg="<c:out value='${param.msg}'/>"></div>
+    <noscript>
+        <div class="alert ${param.status eq 'error' ? 'alert-danger' : 'alert-success'}">
+            <c:out value="${param.msg}"/>
+        </div>
+    </noscript>
+</c:if>

@@ -1,0 +1,106 @@
+=============================================================
+PASTE THIS INTO GAMMA  (Create new > Paste in text > Generate)
+=============================================================
+
+Create a 7-slide academic project presentation titled "Campus Green Mobility
+Booking & Carbon-Savings Tracker".
+
+Audience: university faculty evaluating a B.Tech Web Technologies project.
+Tone: technical, factual, confident. No marketing fluff, no emoji.
+Design: clean and minimal, dark forest-green and white palette, plenty of
+whitespace, sans-serif. Each slide must have a large image placeholder because
+I will upload my own real diagrams and screenshots.
+Keep text minimal — short bullets only, maximum 5 bullets per slide. This is a
+spoken presentation, the slides are support, not a script.
+
+Use exactly these 7 slides:
+
+SLIDE 1 — Title
+"Campus Green Mobility Booking & Carbon-Savings Tracker"
+Subtitle: PBL Topic 6 · Web Technologies · Woxsen University
+Add a line: "Built with JSP, Servlets, JDBC, MySQL and Apache Tomcat"
+
+SLIDE 2 — The Problem
+Explain the problem the project solves:
+- Students default to private vehicles for short campus trips, adding avoidable
+  CO2 emissions
+- Shuttle and shared-bike seats are booked informally, so seats get
+  double-booked and students are turned away
+- Nobody can see how much carbon a green trip actually saves, so there is no
+  incentive to choose one
+Close with the goal: a single system that books seats reliably and makes the
+carbon saving visible per trip.
+
+SLIDE 3 — Technologies Used
+Present as a grouped list, not prose:
+- Frontend: HTML5, CSS3, Bootstrap 5, JavaScript
+- Backend: JSP and Jakarta EE Servlets on Apache Tomcat 11
+- Data access: JDBC using PreparedStatement for every query
+- Database: MySQL 8, schema "green_mobility"
+- State: HttpSession for identity, Cookies for preferences
+- Tools: VS Code, Maven, TablePlus
+Add one line: "All third-party assets are vendored locally, so the application
+runs fully offline."
+
+SLIDE 4 — System Architecture
+Title it "Three-Tier Architecture".
+Bullets:
+- Presentation tier: JSP pages render HTML; session and cookie state live here
+- Application tier: DAO layer holds all SQL; JavaBeans carry data; util classes
+  handle DB connection, cookies and carbon maths
+- Data tier: MySQL with four tables
+Leave a large image area for my architecture diagram.
+
+SLIDE 5 — Database Design
+Title it "Database Schema".
+Bullets:
+- Four tables: students, vehicle_slots, bookings, monthly_archives
+- bookings is the junction table linking a student to a slot (1:N from both)
+- monthly_archives stores a per-month carbon snapshot so totals can reset
+  without deleting booking history
+- Foreign keys enforce referential integrity
+Leave a large image area for my ER diagram.
+
+SLIDE 6 — Core Problem Solved: Preventing Overbooking
+This is the most important slide. Explain:
+- Two students clicking "Book" on the last seat at the same instant is a
+  classic race condition
+- Checking availability and then updating in two separate steps leaves a gap
+  where both requests can pass the check
+- Our fix: fold the check into the write as one atomic SQL statement
+Include this SQL prominently as a code block:
+UPDATE vehicle_slots SET booked_count = booked_count + 1
+WHERE slot_id = ? AND booked_count < capacity;
+- If it updates one row the seat is reserved; if it updates zero rows the slot
+  was already full and the booking is rejected
+- The guarantee lives in the database, not in the browser or the Java code
+Leave an image area for my flowchart.
+
+SLIDE 7 — Carbon Tracker and Results
+Bullets:
+- Every booking calculates CO2 saved: distance x (private car factor minus
+  vehicle factor)
+- Private car 0.192 kg CO2/km, EV shuttle 0.020, bicycle 0.000
+- Savings accumulate into a per-student running total and a campus-wide total
+- "My Impact" shows progress, monthly trend and full booking history
+Leave a large image area for my application screenshots.
+
+=============================================================
+AFTER GAMMA GENERATES — swap in the real images
+=============================================================
+
+Gamma will invent generic stock images. Replace them with the real files in
+this folder (click the image, then Replace > Upload):
+
+  Slide 4  ->  2-architecture-3tier.png
+  Slide 5  ->  1-er-diagram.png              <- the proper ER diagram
+  Slide 6  ->  3-booking-flow-overbooking.png
+  Slide 7  ->  6-screenshot-confirm-booking.png  and  7-screenshot-my-impact.png
+
+Optional extras if you want more visuals:
+  4-screenshot-login.png          login page (session vs cookie demo)
+  5-screenshot-browse-slots.png   live availability + "recently viewed" cookie
+  8-screenshot-leaderboard.png    leaderboard (stretch feature)
+
+Delete any stock image Gamma adds that you do not replace — a generic photo of
+a bicycle weakens a technical presentation.
